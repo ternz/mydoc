@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>2设置libevent</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+<style type="text/css">
+.highlight  { background: #ffffff; }
+.highlight .c { color: #999988; font-style: italic } /* Comment */
+.highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
+.highlight .k { font-weight: bold } /* Keyword */
+.highlight .o { font-weight: bold } /* Operator */
+.highlight .cm { color: #999988; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #999999; font-weight: bold } /* Comment.Preproc */
+.highlight .c1 { color: #999988; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #999999; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #000000; background-color: #ffdddd } /* Generic.Deleted */
+.highlight .gd .x { color: #000000; background-color: #ffaaaa } /* Generic.Deleted.Specific */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #aa0000 } /* Generic.Error */
+.highlight .gh { color: #999999 } /* Generic.Heading */
+.highlight .gi { color: #000000; background-color: #ddffdd } /* Generic.Inserted */
+.highlight .gi .x { color: #000000; background-color: #aaffaa } /* Generic.Inserted.Specific */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #555555 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #aaaaaa } /* Generic.Subheading */
+.highlight .gt { color: #aa0000 } /* Generic.Traceback */
+.highlight .kc { font-weight: bold } /* Keyword.Constant */
+.highlight .kd { font-weight: bold } /* Keyword.Declaration */
+.highlight .kp { font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #445588; font-weight: bold } /* Keyword.Type */
+.highlight .m { color: #009999 } /* Literal.Number */
+.highlight .s { color: #d14 } /* Literal.String */
+.highlight .na { color: #008080 } /* Name.Attribute */
+.highlight .nb { color: #0086B3 } /* Name.Builtin */
+.highlight .nc { color: #445588; font-weight: bold } /* Name.Class */
+.highlight .no { color: #008080 } /* Name.Constant */
+.highlight .ni { color: #800080 } /* Name.Entity */
+.highlight .ne { color: #990000; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #990000; font-weight: bold } /* Name.Function */
+.highlight .nn { color: #555555 } /* Name.Namespace */
+.highlight .nt { color: #000080 } /* Name.Tag */
+.highlight .nv { color: #008080 } /* Name.Variable */
+.highlight .ow { font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #009999 } /* Literal.Number.Float */
+.highlight .mh { color: #009999 } /* Literal.Number.Hex */
+.highlight .mi { color: #009999 } /* Literal.Number.Integer */
+.highlight .mo { color: #009999 } /* Literal.Number.Oct */
+.highlight .sb { color: #d14 } /* Literal.String.Backtick */
+.highlight .sc { color: #d14 } /* Literal.String.Char */
+.highlight .sd { color: #d14 } /* Literal.String.Doc */
+.highlight .s2 { color: #d14 } /* Literal.String.Double */
+.highlight .se { color: #d14 } /* Literal.String.Escape */
+.highlight .sh { color: #d14 } /* Literal.String.Heredoc */
+.highlight .si { color: #d14 } /* Literal.String.Interpol */
+.highlight .sx { color: #d14 } /* Literal.String.Other */
+.highlight .sr { color: #009926 } /* Literal.String.Regex */
+.highlight .s1 { color: #d14 } /* Literal.String.Single */
+.highlight .ss { color: #990073 } /* Literal.String.Symbol */
+.highlight .bp { color: #999999 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #008080 } /* Name.Variable.Class */
+.highlight .vg { color: #008080 } /* Name.Variable.Global */
+.highlight .vi { color: #008080 } /* Name.Variable.Instance */
+.highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
+.pl-c {
+    color: #969896;
+}
+
+.pl-c1,.pl-mdh,.pl-mm,.pl-mp,.pl-mr,.pl-s1 .pl-v,.pl-s3,.pl-sc,.pl-sv {
+    color: #0086b3;
+}
+
+.pl-e,.pl-en {
+    color: #795da3;
+}
+
+.pl-s1 .pl-s2,.pl-smi,.pl-smp,.pl-stj,.pl-vo,.pl-vpf {
+    color: #333;
+}
+
+.pl-ent {
+    color: #63a35c;
+}
+
+.pl-k,.pl-s,.pl-st {
+    color: #a71d5d;
+}
+
+.pl-pds,.pl-s1,.pl-s1 .pl-pse .pl-s2,.pl-sr,.pl-sr .pl-cce,.pl-sr .pl-sra,.pl-sr .pl-sre,.pl-src,.pl-v {
+    color: #df5000;
+}
+
+.pl-id {
+    color: #b52a1d;
+}
+
+.pl-ii {
+    background-color: #b52a1d;
+    color: #f8f8f8;
+}
+
+.pl-sr .pl-cce {
+    color: #63a35c;
+    font-weight: bold;
+}
+
+.pl-ml {
+    color: #693a17;
+}
+
+.pl-mh,.pl-mh .pl-en,.pl-ms {
+    color: #1d3e81;
+    font-weight: bold;
+}
+
+.pl-mq {
+    color: #008080;
+}
+
+.pl-mi {
+    color: #333;
+    font-style: italic;
+}
+
+.pl-mb {
+    color: #333;
+    font-weight: bold;
+}
+
+.pl-md,.pl-mdhf {
+    background-color: #ffecec;
+    color: #bd2c00;
+}
+
+.pl-mdht,.pl-mi1 {
+    background-color: #eaffea;
+    color: #55a532;
+}
+
+.pl-mdr {
+    color: #795da3;
+    font-weight: bold;
+}
+
+.pl-mo {
+    color: #1d3e81;
+}
+.task-list {
+padding-left:10px;
+margin-bottom:0;
+}
+
+.task-list li {
+    margin-left: 20px;
+}
+
+.task-list-item {
+list-style-type:none;
+padding-left:10px;
+}
+
+.task-list-item label {
+font-weight:400;
+}
+
+.task-list-item.enabled label {
+cursor:pointer;
+}
+
+.task-list-item+.task-list-item {
+margin-top:3px;
+}
+
+.task-list-item-checkbox {
+display:inline-block;
+margin-left:-20px;
+margin-right:3px;
+vertical-align:1px;
+}
+</style>
+</head>
+<body>
+<h2>（二）设置libevent</h2>
+
+<p>libevent有一些被整个进程共享的、影响整个库的全局设置。必须在调用libevent库的任何其他部分之前修改这些设置，否则，libevent会进入不一致的状态。</p>
+
+<h3>1 Libevent中的日志消息</h3>
+
+<p>libevent可以记录内部错误和警告。如果编译进日志支持，还会记录调试信息。默认配置下这些信息被写到stderr。通过提供定制的日志函数可以覆盖默认行为。</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">define</span> <span class="pl-en">EVENT_LOG_DEBUG</span> <span class="pl-c1">0</span>
+#<span class="pl-k">define</span> <span class="pl-en">EVENT_LOG_MSG</span>   <span class="pl-c1">1</span>
+#<span class="pl-k">define</span> <span class="pl-en">EVENT_LOG_WARN</span>  <span class="pl-c1">2</span>
+#<span class="pl-k">define</span> <span class="pl-en">EVENT_LOG_ERR</span>   <span class="pl-c1">3</span>
+
+<span class="pl-c">/* Deprecated; see note at the end of this section */</span>
+#<span class="pl-k">define</span> <span class="pl-en">_EVENT_LOG_DEBUG</span> EVENT_LOG_DEBUG
+#<span class="pl-k">define</span> <span class="pl-en">_EVENT_LOG_MSG</span>   EVENT_LOG_MSG
+#<span class="pl-k">define</span> <span class="pl-en">_EVENT_LOG_WARN</span>  EVENT_LOG_WARN
+#<span class="pl-k">define</span> <span class="pl-en">_EVENT_LOG_ERR</span>   EVENT_LOG_ERR
+
+<span class="pl-k">typedef</span> <span class="pl-en">void</span> (*event_log_cb)(<span class="pl-k">int</span> severity, <span class="pl-k">const</span> <span class="pl-k">char</span> *msg);
+
+<span class="pl-k">void</span> <span class="pl-en">event_set_log_callback</span>(event_log_cb cb);</pre></div>
+
+<p>要覆盖libevent的日志行为，编写匹配event_log_cb签名的定制函数，将其作为参数传递给event_set_log_callback（）。随后libevent在日志信息的时候，将会把信息传递给你提供的函数。再次调用event_set_log_callback（），传递参数NULL，就可以恢复默认行为。</p>
+
+<p>示例</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>event2/event.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdio.h<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-k">static</span> <span class="pl-k">void</span> <span class="pl-en">discard_cb</span>(<span class="pl-k">int</span> severity, <span class="pl-k">const</span> <span class="pl-k">char</span> *msg)
+{
+    <span class="pl-c">/* This callback does nothing. */</span>
+}
+
+<span class="pl-k">static</span> <span class="pl-c1">FILE</span> *logfile = <span class="pl-c1">NULL</span>;
+<span class="pl-k">static</span> <span class="pl-k">void</span> <span class="pl-en">write_to_file_cb</span>(<span class="pl-k">int</span> severity, <span class="pl-k">const</span> <span class="pl-k">char</span> *msg)
+{
+    <span class="pl-k">const</span> <span class="pl-k">char</span> *s;
+    <span class="pl-k">if</span> (!logfile)
+        <span class="pl-k">return</span>;
+    <span class="pl-k">switch</span> (severity) {
+        <span class="pl-k">case</span> _EVENT_LOG_DEBUG: s = <span class="pl-s"><span class="pl-pds">"</span>debug<span class="pl-pds">"</span></span>; <span class="pl-k">break</span>;
+        <span class="pl-k">case</span> _EVENT_LOG_MSG:   s = <span class="pl-s"><span class="pl-pds">"</span>msg<span class="pl-pds">"</span></span>;   <span class="pl-k">break</span>;
+        <span class="pl-k">case</span> _EVENT_LOG_WARN:  s = <span class="pl-s"><span class="pl-pds">"</span>warn<span class="pl-pds">"</span></span>;  <span class="pl-k">break</span>;
+        <span class="pl-k">case</span> _EVENT_LOG_ERR:   s = <span class="pl-s"><span class="pl-pds">"</span>error<span class="pl-pds">"</span></span>; <span class="pl-k">break</span>;
+        <span class="pl-k">default</span>:               s = <span class="pl-s"><span class="pl-pds">"</span>?<span class="pl-pds">"</span></span>;     <span class="pl-k">break</span>; <span class="pl-c">/* never reached */</span>
+    }
+    <span class="pl-c1">fprintf</span>(logfile, <span class="pl-s"><span class="pl-pds">"</span>[<span class="pl-c1">%s</span>] <span class="pl-c1">%s</span><span class="pl-cce">\n</span><span class="pl-pds">"</span></span>, s, msg);
+}
+
+<span class="pl-c">/* Turn off all logging from Libevent. */</span>
+<span class="pl-k">void</span> <span class="pl-en">suppress_logging</span>(<span class="pl-k">void</span>)
+{
+    <span class="pl-c1">event_set_log_callback</span>(discard_cb);
+}
+
+<span class="pl-c">/* Redirect all Libevent log messages to the C stdio file 'f'. */</span>
+<span class="pl-k">void</span> <span class="pl-en">set_logfile</span>(<span class="pl-c1">FILE</span> *f)
+{
+    logfile = f;
+    <span class="pl-c1">event_set_log_callback</span>(write_to_file_cb);
+}</pre></div>
+
+<p>注意</p>
+
+<p>在用户提供的event_log_cb回调函数中调用libevent函数是不安全的。比如说，如果试图编写一个使用bufferevent将警告信息发送给某个套接字的日志回调函数，可能会遇到奇怪而难以诊断的bug。未来版本libevent的某些函数可能会移除这个限制。</p>
+
+<p>这个函数在中声明，在libevent 1.0c版本中首次出现。</p>
+
+<h3>2 处理致命错误</h3>
+
+<p>libevent在检测到不可恢复的内部错误时的默认行为是调用exit（）或者abort（），退出正在运行的进程。这类错误通常意味着某处有bug：要么在你的代码中，要么在libevent中。</p>
+
+<p>如果希望更优雅地处理致命错误，可以为libevent提供在退出时应该调用的函数，覆盖默认行为。</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">typedef</span> <span class="pl-en">void</span> (*event_fatal_cb)(<span class="pl-k">int</span> err);
+<span class="pl-k">void</span> <span class="pl-en">event_set_fatal_callback</span>(event_fatal_cb cb);</pre></div>
+
+<p>要使用这些函数，首先定义libevent在遇到致命错误时应该调用的函数，将其传递给event_set_fatal_callback（）。随后libevent在遇到致命错误时将调用你提供的函数。<br>
+你的函数不应该将控制返回到libevent：这样做可能导致不确定的行为。为了避免崩溃，libevent还是会退出。你的函数被不应该调用其它libevent函数。</p>
+
+<p>这些函数声明在中，在libevent 2.0.3-alpha版本中首次出现。</p>
+
+<h3>3 内存管理</h3>
+
+<p>默认情况下，libevent使用C库的内存管理函数在堆上分配内存。通过提供malloc、realloc和free的替代函数，可以让libevent使用其他的内存管理器。希望libevent使用一个更高效的分配器时；或者希望libevent使用一个工具分配器，以便检查内存泄漏时，可能需要这样做。</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">event_set_mem_functions</span>(<span class="pl-k">void</span> *(*malloc_fn)(<span class="pl-c1">size_t</span> sz),
+                             void *(*realloc_fn)(<span class="pl-k">void</span> *ptr, <span class="pl-c1">size_t</span> sz),
+                             void (*free_fn)(<span class="pl-k">void</span> *ptr));</pre></div>
+
+<p>这里有个替换libevent分配器函数的示例，它可以计算已经分配的字节数。实际应用中可能需要添加锁，以避免运行在多个线程中时发生错误。</p>
+
+<p>示例</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>event2/event.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>sys/types.h<span class="pl-pds">&gt;</span></span>
+#<span class="pl-k">include</span> <span class="pl-s"><span class="pl-pds">&lt;</span>stdlib.h<span class="pl-pds">&gt;</span></span>
+
+<span class="pl-c">/* This union's purpose is to be as big as the largest of all the</span>
+<span class="pl-c"> * types it contains. */</span>
+<span class="pl-k">union</span> alignment {
+    <span class="pl-c1">size_t</span> sz;
+    <span class="pl-k">void</span> *ptr;
+    <span class="pl-k">double</span> dbl;
+};
+<span class="pl-c">/* We need to make sure that everything we return is on the right</span>
+<span class="pl-c">   alignment to hold anything, including a double. */</span>
+#<span class="pl-k">define</span> <span class="pl-en">ALIGNMENT</span> <span class="pl-k">sizeof</span>(<span class="pl-k">union</span> alignment)
+
+<span class="pl-c">/* We need to do this cast-to-char* trick on our pointers to adjust</span>
+<span class="pl-c">   them; doing arithmetic on a void* is not standard. */</span>
+#<span class="pl-k">define</span> <span class="pl-en">OUTPTR</span>(<span class="pl-v">ptr</span>) (((<span class="pl-k">char</span>*)ptr)+ALIGNMENT)
+#<span class="pl-k">define</span> <span class="pl-en">INPTR</span>(<span class="pl-v">ptr</span>) (((<span class="pl-k">char</span>*)ptr)-ALIGNMENT)
+
+<span class="pl-k">static</span> <span class="pl-c1">size_t</span> total_allocated = <span class="pl-c1">0</span>;
+<span class="pl-k">static</span> <span class="pl-k">void</span> *<span class="pl-en">replacement_malloc</span>(<span class="pl-c1">size_t</span> sz)
+{
+    <span class="pl-k">void</span> *chunk = <span class="pl-c1">malloc</span>(sz + ALIGNMENT);
+    <span class="pl-k">if</span> (!chunk) <span class="pl-k">return</span> chunk;
+    total_allocated += sz;
+    *(<span class="pl-c1">size_t</span>*)chunk = sz;
+    <span class="pl-k">return</span> <span class="pl-c1">OUTPTR</span>(chunk);
+}
+<span class="pl-k">static</span> <span class="pl-k">void</span> *<span class="pl-en">replacement_realloc</span>(<span class="pl-k">void</span> *ptr, <span class="pl-c1">size_t</span> sz)
+{
+    <span class="pl-c1">size_t</span> old_size = <span class="pl-c1">0</span>;
+    <span class="pl-k">if</span> (ptr) {
+        ptr = <span class="pl-c1">INPTR</span>(ptr);
+        old_size = *(<span class="pl-c1">size_t</span>*)ptr;
+    }
+    ptr = <span class="pl-c1">realloc</span>(ptr, sz + ALIGNMENT);
+    <span class="pl-k">if</span> (!ptr)
+        <span class="pl-k">return</span> <span class="pl-c1">NULL</span>;
+    *(<span class="pl-c1">size_t</span>*)ptr = sz;
+    total_allocated = total_allocated - old_size + sz;
+    <span class="pl-k">return</span> <span class="pl-c1">OUTPTR</span>(ptr);
+}
+<span class="pl-k">static</span> <span class="pl-k">void</span> <span class="pl-en">replacement_free</span>(<span class="pl-k">void</span> *ptr)
+{
+    ptr = <span class="pl-c1">INPTR</span>(ptr);
+    total_allocated -= *(<span class="pl-c1">size_t</span>*)ptr;
+    <span class="pl-c1">free</span>(ptr);
+}
+<span class="pl-k">void</span> <span class="pl-en">start_counting_bytes</span>(<span class="pl-k">void</span>)
+{
+    <span class="pl-c1">event_set_mem_functions</span>(replacement_malloc,
+                            replacement_realloc,
+                            replacement_free);
+}</pre></div>
+
+<p>注意</p>
+
+<ul>
+<li>替换内存管理函数影响libevent随后的所有分配、调整大小和释放内存操作。所以，必须保证在调用任何其他libevent函数之前进行替换。否则，libevent可能用你的free函数释放用C库的malloc分配的内存。</li>
+<li>你的malloc和realloc函数返回的内存块应该具有和C库返回的内存块一样的地址对齐。</li>
+<li>你的realloc函数应该正确处理realloc(NULL,sz)（也就是当作malloc(sz)处理）</li>
+<li>你的realloc函数应该正确处理realloc(ptr,0)（也就是当作free(ptr)处理）</li>
+<li>你的free函数不必处理free(NULL)</li>
+<li>你的malloc函数不必处理malloc(0)</li>
+<li>如果在多个线程中使用libevent，替代的内存管理函数需要是线程安全的。</li>
+<li>libevent将使用这些函数分配返回给你的内存。所以，如果要释放由libevent函数分配和返回的内存，而你已经替换malloc和realloc函数，那么应该使用替代的free函数。</li>
+</ul>
+
+<p>event_set_mem_functions函数声明在中，在libevent 2.0.1-alpha版本中首次出现。</p>
+
+<p>可以在禁止event_set_mem_functions函数的配置下编译libevent。这时候使用event_set_mem_functions将不会编译或者链接。在2.0.2-alpha及以后版本中，可以通过检查是否定义了EVENT_SET_MEM_FUNCTIONS_IMPLEMENTED宏来确定event_set_mem_functions函数是否存在。</p>
+
+<h3>4 锁和线程</h3>
+
+<p>编写多线程程序的时候，在多个线程中同时访问同样的数据并不总是安全的。<br>
+libevent的结构体在多线程下通常有三种工作方式：</p>
+
+<ul>
+<li>某些结构体内在地是单线程的：同时在多个线程中使用它们总是不安全的。</li>
+<li>某些结构体具有可选的锁：可以告知libevent是否需要在多个线程中使用每个对象。</li>
+<li>某些结构体总是锁定的：如果libevent在支持锁的配置下运行，在多个线程中使用它们总是安全的。</li>
+<li>
+为获取锁，在调用分配需要在多个线程间共享的结构体的libevent函数之前，必须告知libevent使用哪个锁函数。</li>
+</ul>
+
+<p>如果使用pthreads库，或者使用Windows本地线程代码，那么你是幸运的：已经有设置libevent使用正确的pthreads或者Windows函数的预定义函数。</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">ifdef</span> WIN32
+<span class="pl-k">int</span> <span class="pl-en">evthread_use_windows_threads</span>(<span class="pl-k">void</span>);
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_USE_WINDOWS_THREADS_IMPLEMENTED</span>
+#<span class="pl-k">endif</span>
+#<span class="pl-k">ifdef</span> _EVENT_HAVE_PTHREADS
+<span class="pl-k">int</span> <span class="pl-en">evthread_use_pthreads</span>(<span class="pl-k">void</span>);
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_USE_PTHREADS_IMPLEMENTED</span>
+#<span class="pl-k">endif</span></pre></div>
+
+<p>这些函数在成功时都返回0，失败时返回-1。<br>
+如果使用不同的线程库，则需要一些额外的工作，必须使用你的线程库来定义函数去实现：</p>
+
+<ul>
+<li>锁</li>
+<li>锁定</li>
+<li>解锁</li>
+<li>分配锁</li>
+<li>析构锁</li>
+<li>条件变量</li>
+<li>创建条件变量</li>
+<li>析构条件变量</li>
+<li>等待条件变量</li>
+<li>触发/广播某条件变量</li>
+<li>线程</li>
+<li>线程ID检测</li>
+<li>
+使用evthread_set_lock_callbacks和evthread_set_id_callback接口告知libevent这些函数。</li>
+</ul>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_WRITE</span>  0x04
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_READ</span>   0x08
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_TRY</span>    0x10
+
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_LOCKTYPE_RECURSIVE</span> <span class="pl-c1">1</span>
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_LOCKTYPE_READWRITE</span> <span class="pl-c1">2</span>
+
+#<span class="pl-k">define</span> <span class="pl-en">EVTHREAD_LOCK_API_VERSION</span> <span class="pl-c1">1</span>
+
+<span class="pl-k">struct</span> evthread_lock_callbacks {
+       <span class="pl-k">int</span> lock_api_version;
+       <span class="pl-k">unsigned</span> supported_locktypes;
+       <span class="pl-k">void</span> *(*alloc)(<span class="pl-k">unsigned</span> locktype);
+       <span class="pl-c1">void</span> (*<span class="pl-c1">free</span>)(<span class="pl-k">void</span> *lock, <span class="pl-k">unsigned</span> locktype);
+       <span class="pl-c1">int</span> (*lock)(<span class="pl-k">unsigned</span> mode, <span class="pl-k">void</span> *lock);
+       <span class="pl-c1">int</span> (*unlock)(<span class="pl-k">unsigned</span> mode, <span class="pl-k">void</span> *lock);
+};
+
+<span class="pl-k">int</span> <span class="pl-en">evthread_set_lock_callbacks</span>(<span class="pl-k">const</span> <span class="pl-k">struct</span> evthread_lock_callbacks *);
+
+<span class="pl-k">void</span> <span class="pl-en">evthread_set_id_callback</span>(<span class="pl-k">unsigned</span> <span class="pl-en">long</span> (*id_fn)(<span class="pl-k">void</span>));
+
+<span class="pl-k">struct</span> evthread_condition_callbacks {
+        <span class="pl-k">int</span> condition_api_version;
+        <span class="pl-k">void</span> *(*alloc_condition)(<span class="pl-k">unsigned</span> condtype);
+        <span class="pl-c1">void</span> (*free_condition)(<span class="pl-k">void</span> *cond);
+        <span class="pl-c1">int</span> (*signal_condition)(<span class="pl-k">void</span> *cond, <span class="pl-k">int</span> broadcast);
+        <span class="pl-c1">int</span> (*wait_condition)(<span class="pl-k">void</span> *cond, <span class="pl-k">void</span> *lock,
+            <span class="pl-k">const</span> <span class="pl-k">struct</span> <span class="pl-c1">timeval</span> *timeout);
+};
+
+<span class="pl-k">int</span> <span class="pl-en">evthread_set_condition_callbacks</span>(
+        <span class="pl-k">const</span> <span class="pl-k">struct</span> evthread_condition_callbacks *);</pre></div>
+
+<p>evthread_lock_callbacks结构体描述的锁回调函数及其能力。对于上述版本，lock_api_version字段必须设置为EVTHREAD_LOCK_API_VERSION。必须设置supported_locktypes字段为EVTHREAD_LOCKTYPE_*常量的组合以描述支持的锁类型（在2.0.4-alpha版本中，EVTHREAD_LOCK_RECURSIVE是必须的，EVTHREAD_LOCK_READWRITE则没有使用）。alloc函数必须返回指定类型的新锁；free函数必须释放指定类型锁持有的所有资源；lock函数必须试图以指定模式请求锁定，如果成功则返回0，失败则返回非零；unlock函数必须试图解锁，成功则返回0，否则返回非零。</p>
+
+<p>可识别的锁类型有：</p>
+
+<ul>
+<li>0：通常的，不必递归的锁。</li>
+<li>EVTHREAD_LOCKTYPE_RECURSIVE：不会阻塞已经持有它的线程的锁。一旦持有它的线程进行原来锁定次数的解锁，其他线程立刻就可以请求它了。</li>
+<li>EVTHREAD_LOCKTYPE_READWRITE：可以让多个线程同时因为读而持有它，但是任何时刻只有一个线程因为写而持有它。写操作排斥所有读操作。</li>
+</ul>
+
+<p>可识别的锁模式有：</p>
+
+<ul>
+<li>EVTHREAD_READ：仅用于读写锁：为读操作请求或者释放锁</li>
+<li>EVTHREAD_WRITE：仅用于读写锁：为写操作请求或者释放锁</li>
+<li>EVTHREAD_TRY：仅用于锁定：仅在可以立刻锁定的时候才请求锁定</li>
+</ul>
+
+<p>id_fn参数必须是一个函数，它返回一个无符号长整数，标识调用此函数的线程。对于相同线程，这个函数应该总是返回同样的值；而对于同时调用该函数的不同线程，必须返回不同的值。<br>
+evthread_condition_callbacks结构体描述了与条件变量相关的回调函数。对于上述版本，condition_api_version字段必须设置为EVTHREAD_CONDITION_API_VERSION。alloc_condition函数必须返回到新条件变量的指针。它接受0作为其参数。free_condition函数必须释放条件变量持有的存储器和资源。wait_condition函数要求三个参数：一个由alloc_condition分配的条件变量，一个由你提供的evthread_lock_callbacks.alloc函数分配的锁，以及一个可选的超时值。调用本函数时，必须已经持有参数指定的锁；本函数应该释放指定的锁，等待条件变量成为授信状态，或者直到指定的超时时间已经流逝（可选）。wait_condition应该在错误时返回-1，条件变量授信时返回0，超时时返回1。返回之前，函数应该确定其再次持有锁。最后，signal_condition函数应该唤醒等待该条件变量的某个线程（broadcast参数为false时），或者唤醒等待条件变量的所有线程（broadcast参数为true时）。只有在持有与条件变量相关的锁的时候，才能够进行这些操作。<br>
+关于条件变量的更多信息，请查看pthreads的pthread_cond_*函数文档，或者Windows的CONDITION_VARIABLE（Windows Vista新引入的）函数文档。</p>
+
+<p>示例</p>
+
+<p>关于使用这些函数的示例，请查看Libevent源代码发布版本中的evthread_pthread.c和evthread_win32.c文件。<br>
+这些函数在中声明，其中大多数在2.0.4-alpha版本中首次出现。2.0.1-alpha到2.0.3-alpha使用较老版本的锁函数。event_use_pthreads函数要求程序链接到event_pthreads库。<br>
+条件变量函数是2.0.7-rc版本新引入的，用于解决某些棘手的死锁问题。<br>
+可以创建禁止锁支持的libevent。这时候已创建的使用上述线程相关函数的程序将不能运行。</p>
+
+<h3>5 调试锁的使用</h3>
+
+<p>为帮助调试锁的使用，libevent有一个可选的“锁调试”特征。这个特征包装了锁调用，以便捕获典型的锁错误，包括：</p>
+
+<ul>
+<li>解锁并没有持有的锁</li>
+<li>重新锁定一个非递归锁</li>
+</ul>
+
+<p>如果发生这些错误中的某一个，libevent将给出断言失败并且退出。</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">evthread_enable_lock_debugging</span>(<span class="pl-k">void</span>);
+#<span class="pl-k">define</span> <span class="pl-en">evthread_enable_lock_debuging</span>() evthread_enable_lock_debugging()</pre></div>
+
+<p>注意</p>
+
+<p>必须在创建或者使用任何锁之前调用这个函数。为安全起见，请在设置完线程函数后立即调用这个函数。<br>
+这个函数是在2.0.4-alpha版本新引入的。</p>
+
+<h3>6 调试事件的使用</h3>
+
+<p>libevent可以检测使用事件时的一些常见错误并且进行报告。这些错误包括：</p>
+
+<ul>
+<li>将未初始化的event结构体当作已经初始化的</li>
+<li>试图重新初始化未决的event结构体</li>
+</ul>
+
+<p>跟踪哪些事件已经初始化需要使用额外的内存和处理器时间，所以只应该在真正调试程序的时候才启用调试模式。</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">event_enable_debug_mode</span>(<span class="pl-k">void</span>);</pre></div>
+
+<p>必须在创建任何event_base之前调用这个函数。</p>
+
+<p>如果在调试模式下使用大量由event_assign（而不是event_new）创建的事件，程序可能会耗尽内存，这是因为没有方式可以告知libevent由event_assign创建的事件不会再被使用了（可以调用event_free告知由event_new创建的事件已经无效了）。如果想在调试时避免耗尽内存，可以显式告知libevent这些事件不再被当作已分配的了：</p>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre><span class="pl-k">void</span> <span class="pl-en">event_debug_unassign</span>(<span class="pl-k">struct</span> event *ev);</pre></div>
+
+<p>没有启用调试的时候调用event_debug_unassign没有效果。<br>
+这些调试函数在libevent 2.0.4-alpha版本中加入。</p>
+
+<h3>7 检测libevent的版本</h3>
+
+<p>新版本的libevent会添加特征，移除bug。有时候需要检测libevent的版本，以便：</p>
+
+<ul>
+<li>检测已安装的libevent版本是否可用于创建你的程序</li>
+<li>为调试显示libevent的版本</li>
+<li>检测libevent的版本，以便向用户警告bug，或者提示要做的工作</li>
+</ul>
+
+<p>接口</p>
+
+<div class="highlight highlight-source-c"><pre>#<span class="pl-k">define</span> <span class="pl-en">LIBEVENT_VERSION_NUMBER</span> 0x02000300
+#<span class="pl-k">define</span> <span class="pl-en">LIBEVENT_VERSION</span> <span class="pl-s"><span class="pl-pds">"</span>2.0.3-alpha<span class="pl-pds">"</span></span>
+<span class="pl-k">const</span> <span class="pl-k">char</span> *<span class="pl-en">event_get_version</span>(<span class="pl-k">void</span>);
+<span class="pl-c1">ev_uint32_t</span> <span class="pl-en">event_get_version_number</span>(<span class="pl-k">void</span>);</pre></div>
+
+<p>宏返回编译时的libevent版本；函数返回运行时的libevent版本。注意：如果动态链接到libevent，这两个版本可能不同。</p>
+
+<p>可以获取两种格式的libevent版本：用于显示给用户的字符串版本，或者用于数值比较的4字节整数版本。整数格式使用高字节表示主版本，低字节表示副版本，第三字节表示修正版本，最低字节表示发布状态：0表示发布，非零表示某特定发布版本的后续开发序列。</p>
+
+<p>所以，libevent 2.0.1-alpha发布版本的版本号是[02 00 01 00]，或者说0x02000100。2.0.1-alpha和2.0.2-alpha之间的开发版本可能是[02 00 01 08]，或者说0x02000108。</p>
+</body>
+</html>
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
